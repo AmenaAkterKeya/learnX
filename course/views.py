@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Department, Course,Review
 from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer
 from django.http import Http404 
-from rest_framework.permissions import IsAuthenticated
+
 
 class DepartmentForInstructor(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
@@ -19,7 +19,6 @@ class DepartmentViewset(viewsets.ModelViewSet):
     filter_backends = [DepartmentForInstructor]
     
 class CourseList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filter_backends = [filters.SearchFilter]
@@ -27,7 +26,7 @@ class CourseList(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(instructor=self.request.user.instructor)
 class CourseDetail(APIView):
-    permission_classes = [IsAuthenticated]
+    
 
     def get_object(self, pk):
         try:

@@ -9,6 +9,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 # for sending email
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -77,7 +78,8 @@ class UserLoginApiView(APIView):
         return Response(serializer.errors)
 
 class UserLogoutView(APIView):
-    def get(self, request):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
         request.user.auth_token.delete()
         logout(request)
         return redirect('login')

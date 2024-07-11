@@ -1,7 +1,6 @@
 from rest_framework import viewsets, status,filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from .models import Department, Course,Review
 from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer
 from django.http import Http404 

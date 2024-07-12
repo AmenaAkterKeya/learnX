@@ -14,7 +14,11 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
         read_only_fields = ['instructor', 'created_on']
-    
+    def create(self, validated_data):
+        request = self.context.get('request')
+        instructor = request.user.instructor  # Assuming you have a one-to-one relationship between User and Instructor
+        validated_data['instructor'] = instructor
+        return super().create(validated_data)
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review

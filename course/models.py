@@ -15,11 +15,12 @@ class Course(models.Model):
     department = models.ManyToManyField(Department) 
     lesson = models.IntegerField()
     fee = models.IntegerField()
-    image = models.ImageField(upload_to="course/course_pic/" ,null=True, blank=True)
+    image = models.ImageField(upload_to="course/course_pic/" ,null=True, blank=True,default='course/img/default.jpg')
     created_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.title} - {self.instructor.user.username}'
+    
 
 STAR_CHOICES = [
     ('⭐', '⭐'),

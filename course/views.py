@@ -21,9 +21,13 @@ class CourseList(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'department__name', 'instructor__user__first_name','instructor__user__last_name']
-    def perform_create(self, serializer):
-        serializer.save(instructor=self.request.user.instructor)
+    search_fields = ['department__name', 'instructor__user__first_name','instructor__user__last_name']
+    def get_queryset(self):
+        queryset = super().get_queryset() 
+        instructor_id = self.request.query_params.get('instructor_id')
+        if instructor_id:
+            queryset = queryset.filter(instructor_id=instructor_id)
+        return queryset
 class CourseDetail(APIView):
     
 

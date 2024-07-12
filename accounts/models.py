@@ -13,4 +13,4 @@ class Instructor(models.Model):
     image = models.ImageField(upload_to='media/images/', null=True, blank=True)
     mobile_no = models.CharField(max_length = 12)
     def __str__(self):
-        return self.user.username
+        return f"{self.user.first_name} {self.user.last_name}"

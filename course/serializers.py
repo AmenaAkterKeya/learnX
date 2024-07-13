@@ -7,8 +7,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CourseSerializer(serializers.ModelSerializer):
-    instructor = serializers.StringRelatedField(many=False)
-    department = serializers.StringRelatedField(many=True)
+    # instructor = serializers.StringRelatedField(many=False)
+    # department = serializers.StringRelatedField(many=True)
     
     class Meta:
         model = Course

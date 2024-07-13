@@ -1,17 +1,26 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Student, Instructor
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+
 class StudentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(many=False)
+    user = UserSerializer(many=False)
+
     class Meta:
         model = Student
         fields = '__all__'
+
 class InstructorSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(many=False)
+    user = UserSerializer(many=False)
+
     class Meta:
-        model =Instructor
+        model = Instructor
         fields = '__all__'
-    
+
 class RegistrationSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(required=True)
     role = serializers.ChoiceField(choices=['student', 'instructor'], required=True)

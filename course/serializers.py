@@ -7,8 +7,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CourseSerializer(serializers.ModelSerializer):
-    # instructor = serializers.StringRelatedField(many=False)
-    # department = serializers.StringRelatedField(many=True)
+    instructor = serializers.StringRelatedField(many=False)
+    department = serializers.StringRelatedField(many=True)
     
     class Meta:
         model = Course
@@ -16,7 +16,7 @@ class CourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['instructor', 'created_on']
     def create(self, validated_data):
         request = self.context.get('request')
-        instructor = request.user.instructor  # Assuming you have a one-to-one relationship between User and Instructor
+        instructor = request.user.instructor  
         validated_data['instructor'] = instructor
         return super().create(validated_data)
 class ReviewSerializer(serializers.ModelSerializer):

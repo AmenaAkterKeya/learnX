@@ -11,6 +11,7 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model =Instructor
         fields = '__all__'
+    
 class RegistrationSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(required=True)
     role = serializers.ChoiceField(choices=['student', 'instructor'], required=True)

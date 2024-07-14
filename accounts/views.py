@@ -1,6 +1,6 @@
 from .models import Student,Instructor
 from . import serializers
-from rest_framework import viewsets
+from rest_framework import viewsets,filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
@@ -18,10 +18,16 @@ from django.shortcuts import redirect
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = serializers.StudentSerializer
+class InstructorForInstructor(filters.BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        instructor_id = request.query_params.get("user_id")
+        if instructor_id:
+            return queryset.filter(user_id=instructor_id)
+        return queryset    
 class InstructorViewset(viewsets.ModelViewSet):
     queryset = Instructor.objects.all()
     serializer_class = serializers.InstructorSerializer
-
+    filter_backends = [InstructorForInstructor]
 class UserRegistrationApiView(APIView):
     serializer_class = serializers.RegistrationSerializer
     

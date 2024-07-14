@@ -32,7 +32,9 @@ CSRF_TRUSTED_ORIGINS = ['https://learnx-ldys.onrender.com']
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5500',
     'https://learnx-ldys.onrender.com',
+    
 ]
+LOGIN_URL = "http://127.0.0.1:5500/login.html"
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 

@@ -5,6 +5,7 @@ colorama
 crispy-bootstrap5
 distlib
 Django
+django-allauth
 django-braces
 django-cors-headers
 django-crispy-forms
@@ -24,6 +25,7 @@ numpy
 opencv-contrib-python
 packaging
 pillow
+pip
 pipenv
 platformdirs
 psycopg2
@@ -38,21 +40,5 @@ setuptools
 sqlparse
 swapper
 tzdata
-uvicorn
-virtualenv
-
-pytweening
-setuptools
-sqlparse
-swapper
-tzdata
-uvicorn
-virtualenv
-
-swapper
-tzdata
-uvicorn
-virtualenv
-
 uvicorn
 virtualenv

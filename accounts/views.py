@@ -71,16 +71,16 @@ class UserLoginApiView(APIView):
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
 
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
+
+            user = User.objects.filter(username=username).first()
+            if user is None:
                 return Response({'error': 'Invalid Credential'}, status=400)
 
             if not user.is_active:
                 return Response({'error': 'Email Not Confirmed'}, status=400)
 
+
             user = authenticate(username=username, password=password)
-            
             if user:
                 token, _ = Token.objects.get_or_create(user=user)
                 login(request, user)

@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status,filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Department, Course,Review
+from .models import Department, Course,Review,Comment
 from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,CommentSerializer
 from django.http import Http404 
 
@@ -69,3 +69,31 @@ class ReviewViewset(viewsets.ModelViewSet):
     
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+class CommentViewset(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()  
+    serializer_class = CommentSerializer
+
+class CourseComments(APIView):
+    
+    def get(self, request, course_pk, format=None):
+        try:
+            course = Course.objects.get(pk=course_pk)
+        except Course.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        comments = Comment.objects.filter(course=course)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, course_pk, format=None):
+        try:
+            course = Course.objects.get(pk=course_pk)
+        except Course.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(course=course)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

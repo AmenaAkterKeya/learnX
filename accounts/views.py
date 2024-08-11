@@ -66,29 +66,22 @@ def activate(request, uid64, token):
 
 class UserLoginApiView(APIView):
     def post(self, request):
-        serializer = serializers.UserLoginSerializer(data=request.data)
+        serializer = serializers.UserLoginSerializer(data = self.request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
 
-
-            user = User.objects.filter(username=username).first()
-            if user is None:
-                return Response({'error': 'Invalid Credential'}, status=400)
-
-            if not user.is_active:
-                return Response({'error': 'Email Not Confirmed'}, status=400)
-
-
-            user = authenticate(username=username, password=password)
+            user = authenticate(username= username, password=password)
+            
             if user:
                 token, _ = Token.objects.get_or_create(user=user)
-                login(request, user)
-                return Response({'token': token.key, 'user_id': user.id})
-            else:
-                return Response({'error': 'Invalid Credential'}, status=400)
-        return Response(serializer.errors, status=400)
+                print(token)
 
+                login(request, user)
+                return Response({'token' : token.key, 'user_id' : user.id})
+            else:
+                return Response({'error' : "Email not confirmed. Please confirm your email."})
+        return Response(serializer.errors)
 
 class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]

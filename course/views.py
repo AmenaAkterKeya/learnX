@@ -2,7 +2,7 @@ from rest_framework import viewsets, status,filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Department, Course,Review
-from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer
+from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,CommentSerializer
 from django.http import Http404 
 
 
@@ -28,6 +28,7 @@ class CourseList(viewsets.ModelViewSet):
         if instructor_id:
             queryset = queryset.filter(instructor_id=instructor_id)
         return queryset
+    
 class CourseDetail(APIView):
     
 
@@ -57,7 +58,13 @@ class CourseDetail(APIView):
         course = self.get_object(pk)
         course.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+    def post(self, request, pk, format=None):
+        course = self.get_object(pk)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(course=course)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ReviewViewset(viewsets.ModelViewSet):
     
     queryset = Review.objects.all()

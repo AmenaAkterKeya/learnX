@@ -8,3 +8,4 @@ class DepartmentAdmin(admin.ModelAdmin):
 admin.site.register(models.Department, DepartmentAdmin)
 admin.site.register(models.Course)
 admin.site.register(models.Review)
+admin.site.register(models.Comment)

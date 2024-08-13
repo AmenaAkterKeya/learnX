@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Department, Course,Review,Comment
+from .models import Department, Course,Review,Comment,Transaction,Enroll
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,4 +26,28 @@ class ReviewSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
+        fields = '__all__'
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['amount', 'transaction_type']
+
+class DepositSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+    def validate_amount(self, value):
+        min_deposit_amount = 100
+        if value < min_deposit_amount:
+            raise serializers.ValidationError(f'You need to deposit at least {min_deposit_amount} $')
+        return value
+
+class TransactionReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['amount', 'balance_after_transaction', 'timestamp', 'transaction_type']
+        
+class EnrollSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enroll
         fields = '__all__'

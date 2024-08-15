@@ -103,7 +103,7 @@ WSGI_APPLICATION = 'learnX.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://learnx_jz07_user:HYOvNYzltrTaKO6qUjmSlMIudLCj38z2@dpg-cqt2s5dsvqrc738crb2g-a.oregon-postgres.render.com/learnx_jz07',
+        default='postgresql://learnx_dsv0_user:eFmAvIHgkv6X0yeR8nTM8m96xTfepl7M@dpg-cqv2cijtq21c73a14g20-a.oregon-postgres.render.com/learnx_dsv0',
 
     )
 }

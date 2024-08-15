@@ -1,14 +1,11 @@
 from rest_framework import viewsets, status,filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Department, Course,Review,Comment,Transaction,UserBankAccount,Enroll
-from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,CommentSerializer,TransactionReportSerializer,DepositSerializer
+from .models import Department, Course,Review,Comment,Balance,Enroll
+from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,EnrollmentSerializer,CommentSerializer,DepositSerializer
 from django.http import Http404 
-from rest_framework.generics import CreateAPIView,ListAPIView
-from django.db.models import Sum
-from datetime import datetime
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+
 class DepartmentForInstructor(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         instructor_id = request.query_params.get("instructor_id")
@@ -101,91 +98,79 @@ class CourseComments(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class DepositMoneyView(CreateAPIView):
+class DepositView(viewsets.ModelViewSet):
     serializer_class = DepositSerializer
 
-
-    def perform_create(self, serializer):
-        amount = serializer.validated_data.get('amount')
-        user_account, created = UserBankAccount.objects.get_or_create(user=self.request.user, defaults={'balance': 0})
-        user_account.balance += amount
-        user_account.save(update_fields=['balance'])
-
-        transaction = Transaction.objects.create(
-            account=user_account,
-            amount=amount,
-            balance_after_transaction=user_account.balance,
-            transaction_type=1 
-        )
-
-      
-
-        return transaction
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response({'detail': f'{serializer.validated_data.get("amount")}$ was deposited to your account successfully'}, status=status.HTTP_201_CREATED)
-
-class TransactionReportView(ListAPIView):
-    serializer_class = TransactionReportSerializer
-    
-
     def get_queryset(self):
-        user_account = self.request.user.account
-        queryset = Transaction.objects.filter(account=user_account)
+        return Balance.objects.filter(student=self.request.user.student)
 
-        start_date_str = self.request.query_params.get('start_date')
-        end_date_str = self.request.query_params.get('end_date')
+class EnrollmentView(APIView):
+    def post(self, request, id, format=None):
+        course = get_object_or_404(Course, id=id)
+        student = request.user.student
 
-        if start_date_str and end_date_str:
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-            queryset = queryset.filter(timestamp__date__gte=start_date, timestamp__date__lte=end_date)
+        deposits = Balance.objects.filter(student=student)
+        total_balance = sum(deposit.amount for deposit in deposits)
+        if total_balance < course.fee:
+            return Response({
+                "error": "Insufficient balance",
+                "current_balance": total_balance
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-        return queryset
+        # Create enrollment
+        Enroll.objects.create(student=student, course=course)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
+        # Deduct course fee from the balance
+        remaining_balance = total_balance - course.fee
+        Balance.objects.create(student=student, amount=-course.fee)
 
-        balance = queryset.aggregate(Sum('amount'))['amount__sum'] if queryset else self.request.user.account.balance
         return Response({
-            'transactions': serializer.data,
-            'balance': balance
-        })
+            "message": "Enrollment successful",
+            "current_balance": remaining_balance
+        }, status=status.HTTP_201_CREATED)
 
-class EnrollCourseView(APIView):
-    def post(self, request, course_id, format=None):
-        # Fetch the course or return 404 if not found
-        course = get_object_or_404(Course, pk=course_id)
+class UserEnrollmentsView(APIView):
+    def get(self, request, format=None):
+        student = request.user.student
+        enrollments = Enroll.objects.filter(student=student)
+        serializer = EnrollmentSerializer(enrollments, many=True)
+        
+        deposits = Balance.objects.filter(student=student)
+        total_balance = sum(deposit.amount for deposit in deposits)
+        course_fees = sum(enrollment.course.fee for enrollment in enrollments)
+        current_balance = total_balance - course_fees
 
-        # Check if the user has enough balance to enroll in the course
-        account = request.user.account
-        if account.balance < course.fee:
-            return Response({'detail': 'Insufficient balance to enroll in the course.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "current_balance": current_balance,
+            "enrollments": serializer.data
+        }, status=status.HTTP_200_OK)
 
-        # Deduct the course fee from the user's balance
-        account.balance -= course.fee
-        account.save()
+# class DepositBalanceView(APIView):
+#     def get(self, request, format=None):
+#         user = request.user
+#         deposits = Balance.objects.filter(user=user)
+#         deposit_serializer = DepositSerializer(deposits, many=True)
 
-        # Create a new Enroll instance
-        enroll = Enroll.objects.create(
-            user=request.user,
-            courses=course,
-            enroll_date=timezone.now(),
-            amount=course.fee
-        )
+#         initial_balance = sum(deposit.amount for deposit in deposits)
 
-        # Log the transaction
-        transaction = Transaction.objects.create(
-            account=account,
-            amount=-course.fee,
-            balance_after_transaction=account.balance,
-            timestamp=enroll.enroll_date,
-            transaction_type=1  # Assuming 1 is the type for enrollment
-        )
+#         enrollments = Enroll.objects.filter(user=user)
+#         updated_balance = initial_balance
+#         for enrollment in enrollments:
+#             course_fee = enrollment.course.fee
+#             updated_balance -= course_fee
 
-        # Respond with success message
-        return Response({'detail': f'You have successfully enrolled in {course.title}.'}, status=status.HTTP_201_CREATED)
+#         return Response({
+#             "initial_balance": initial_balance,
+#             "updated_balance": updated_balance,
+#             "deposits": deposit_serializer.data
+#         }, status=status.HTTP_200_OK)
+
+class DepositBalanceView(APIView):
+    def get(self, request, format=None):
+        student = request.user.student
+        deposits = Balance.objects.filter(student=student)
+        total_balance = sum(deposit.amount for deposit in deposits)
+        
+        return Response({
+            "total_balance": total_balance
+        }, status=status.HTTP_200_OK)

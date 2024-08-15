@@ -78,7 +78,17 @@ class UserLoginApiView(APIView):
                 print(token)
 
                 login(request, user)
-                return Response({'token' : token.key, 'user_id' : user.id})
+                role = None
+                if hasattr(user, 'student'):
+                    role = 'student'
+                elif hasattr(user, 'instructor'):
+                    role = 'instructor'
+
+                return Response({
+                    'token': token.key,
+                    'user_id': user.id,
+                    'role': role  # Include the role in the response
+                })
             else:
                 return Response({'error' : "Email not confirmed. Please confirm your email."})
         return Response(serializer.errors)

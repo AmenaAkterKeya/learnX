@@ -49,32 +49,20 @@ class Review(models.Model):
     def __str__(self):
         return f"Reviewer : {self.reviewer.user.first_name} ; Instructor : {self.instructor.user.first_name}"
 
-class UserBankAccount(models.Model):
-    user = models.OneToOneField(User, related_name='account', on_delete=models.CASCADE)
-    balance = models.DecimalField(default=0, max_digits=12, decimal_places=2)
+class Balance(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Account"
+        return f"{self.student.user.username} - ${self.amount}"
 
- 
-class Transaction(models.Model):
-    account = models.ForeignKey(UserBankAccount, related_name='transactions', on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=12)
-    balance_after_transaction = models.DecimalField(decimal_places=2, max_digits=12)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    transaction_type = models.IntegerField(choices=TRANSACTION_TYPE, null=True)
-
-    class Meta:
-        ordering = ['timestamp']
-
-    def __str__(self):
-        return f"Transaction by {self.account.user.username} on {self.timestamp}"   
-    
 class Enroll(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    courses = models.ForeignKey(Course, on_delete=models.CASCADE)
-    enroll_date = models.DateTimeField(default=timezone.now)
-    amount = models.DecimalField(max_digits=12, decimal_places=2)  
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    enrolled_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.username} enrolled in {self.courses.title}'
+        return f"{self.student.user.username} enrolled in {self.course.title}"
+
+

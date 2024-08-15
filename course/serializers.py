@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Department, Course,Review,Comment,Transaction,Enroll
-
+from .models import Department, Course,Review,Comment,Balance,Enroll
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
@@ -28,26 +27,21 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
-class TransactionSerializer(serializers.ModelSerializer):
+class DepositSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Transaction
-        fields = ['amount', 'transaction_type']
+        model = Balance
+        fields = '__all__'
+        read_only_fields = ['student', 'created_on']
 
-class DepositSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+    def create(self, validated_data):
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            validated_data['student'] = request.user.student
+        return super().create(validated_data)
 
-    def validate_amount(self, value):
-        min_deposit_amount = 100
-        if value < min_deposit_amount:
-            raise serializers.ValidationError(f'You need to deposit at least {min_deposit_amount} $')
-        return value
-
-class TransactionReportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = ['amount', 'balance_after_transaction', 'timestamp', 'transaction_type']
-        
-class EnrollSerializer(serializers.ModelSerializer):
+class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enroll
         fields = '__all__'
+
+

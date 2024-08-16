@@ -14,10 +14,16 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.shortcuts import redirect
-
+class StudentForStudent(filters.BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        instructor_id = request.query_params.get("user_id")
+        if instructor_id:
+            return queryset.filter(user_id=instructor_id)
+        return queryset   
 class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = serializers.StudentSerializer
+    filter_backends = [StudentForStudent]
 class InstructorForInstructor(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         instructor_id = request.query_params.get("user_id")

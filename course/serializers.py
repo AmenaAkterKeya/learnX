@@ -43,5 +43,12 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enroll
         fields = '__all__'
+        read_only_fields = ['student', 'created_on']
+    def create(self, validated_data):
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            validated_data['student'] = request.user.student
+        return super().create(validated_data)
+  
 
 

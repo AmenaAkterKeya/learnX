@@ -9,11 +9,16 @@ router.register('reviews', views.ReviewViewset)
 router.register('comment', views.CommentViewset) 
 router.register('balance', views.DepositView, basename="balance")
 
+
+
 urlpatterns = [
     path('', include(router.urls)),
     path('courses/<int:pk>/', views.CourseDetail.as_view(), name='course_detail'),
     path('courses/<int:course_pk>/comments/', views.CourseComments.as_view(), name='course-comments'),
-    path('enroll/<int:id>/', views.EnrollmentView.as_view(), name='enroll'),
-    path('enrollments/', views.UserEnrollmentsView.as_view(), name='user_enrollments'),
+     path('course/enrollments/<int:student_id>/', views.StudentEnrollmentsView.as_view(), name='student-enrollments'),
+    path('enrolls/<int:course_pk>/', views.EnrollmentView.as_view(), name='user_enrollments'),
+    path('enrollview/<int:pk>/', views.StudentEnrollmentsView.as_view(), name='user_view'),
+ 
     path('balanceview/', views.DepositBalanceView.as_view(), name='user_balance'),
+   
 ]

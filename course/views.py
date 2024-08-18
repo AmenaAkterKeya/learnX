@@ -109,6 +109,10 @@ class EnrollmentView(APIView):
     def post(self, request, course_pk, format=None):
         course = Course.objects.get(pk=course_pk)
         student = request.user.student
+        if Enroll.objects.filter(student=student, course=course).exists():
+            return Response({
+                "error": "You are already enrolled in this course"
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         deposits = Balance.objects.filter(student=student)
         total_balance = sum(deposit.amount for deposit in deposits)
@@ -125,7 +129,11 @@ class EnrollmentView(APIView):
             "message": "Enrollment successful",
             "current_balance": remaining_balance
         }, status=status.HTTP_201_CREATED)
-
+class EnrollmentStatusView(APIView):
+    def get(self, request, course_pk, format=None):
+        student = request.user.student
+        enrolled = Enroll.objects.filter(student=student, course_id=course_pk).exists()
+        return Response({'enrolled': enrolled}, status=status.HTTP_200_OK)
 class StudentEnrollmentsView(APIView):
     def get_object(self, pk):
         try:

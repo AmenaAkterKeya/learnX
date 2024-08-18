@@ -96,7 +96,7 @@ class UserLoginApiView(APIView):
                     'role': role  # Include the role in the response
                 })
             else:
-                return Response({'error' : "Email not confirmed. Please confirm your email."})
+                return Response({'error' : "Password is incorrect"})
         return Response(serializer.errors)
 
 class UserLogoutView(APIView):

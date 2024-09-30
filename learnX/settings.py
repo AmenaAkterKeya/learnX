@@ -27,7 +27,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://learnx-ldys.onrender.com','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['"127.0.0.1", ".vercel.app"']
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
@@ -40,6 +40,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +63,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,7 +91,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'learnX.wsgi.application'
+WSGI_APPLICATION = 'learnX.wsgi.app'
 
 
 # Database
@@ -100,13 +103,24 @@ WSGI_APPLICATION = 'learnX.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://learnx_dsv0_user:eFmAvIHgkv6X0yeR8nTM8m96xTfepl7M@dpg-cqv2cijtq21c73a14g20-a.oregon-postgres.render.com/learnx_dsv0',
 
-    )
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.glpjtceyrhwzxippmrkf',
+        'PASSWORD': 'bSvnxl2SSVWFedwL',
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
+        'PORT': '6543'
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Replace this value with your local database's connection string.
+#         default='postgresql://learnx_dsv0_user:eFmAvIHgkv6X0yeR8nTM8m96xTfepl7M@dpg-cqv2cijtq21c73a14g20-a.oregon-postgres.render.com/learnx_dsv0',
+
+#     )
+# }
 REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -152,6 +166,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -31,7 +31,7 @@ CSRF_TRUSTED_ORIGINS = ['"http://127.0.0.1", ".vercel.app"']
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5500',
-   
+    'https://learn-x-seven.vercel.app/'
     
 ]
 LOGIN_URL = "http://127.0.0.1:5500/login.html"

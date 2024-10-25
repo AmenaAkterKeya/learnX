@@ -22,7 +22,7 @@
 ### User Management
 - **User Registration**: New users can register an account via a registration link.
 - **User Login**: Existing users can log in using their credentials.
-- 
+
 ### Role-Based Access
 - **Student Role**:
   - **Course Enrollment**: Easily enroll in courses of your choice.
@@ -136,7 +136,7 @@
    python manage.py runserver
 5. **Run Tests:**:
    ```bash
-   python manage.py test
+   http://localhost:8000/
 The backend server will be accessible at http://localhost:8000/api/.
 
 ## License

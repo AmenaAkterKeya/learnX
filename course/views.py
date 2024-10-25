@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from .models import Department, Course,Review,Comment,Balance,Enroll
 from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,EnrollmentSerializer,CommentSerializer,DepositSerializer
 from django.http import Http404
+from rest_framework import generics
 from accounts.models import Student
-from django.shortcuts import get_object_or_404
+from django.db.models import Sum
 from rest_framework.permissions import IsAuthenticated
 class DepartmentForInstructor(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
@@ -67,7 +68,6 @@ class CourseDetail(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ReviewViewset(viewsets.ModelViewSet):
-    
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
@@ -143,6 +143,8 @@ class StudentEnrollmentsView(APIView):
 
     def get(self, request, pk, format=None):
         student = self.get_object(pk)
+
+        # Get enrollments for the student
         enrollments = Enroll.objects.filter(student=student).select_related('course', 'course__instructor')
 
         enrolled_courses = [
@@ -156,7 +158,19 @@ class StudentEnrollmentsView(APIView):
             for enrollment in enrollments
         ]
 
-        return Response(enrolled_courses, status=status.HTTP_200_OK)
+        total_courses_purchased = enrollments.count()
+
+        total_deposit = Balance.objects.filter(student=student).aggregate(total=Sum('amount'))['total'] or 0.00
+        total_purchase = sum(enrollment.course.fee for enrollment in enrollments)
+
+        response_data = {
+            "enrolled_courses": enrolled_courses,
+            "total_deposit_amount": total_deposit,
+            "total_purchase_amount": total_purchase,
+            "total_courses_purchased": total_courses_purchased,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
 class DepositBalanceView(APIView):
     def get(self, request, format=None):
         student = request.user.student
@@ -172,4 +186,3 @@ class DepositBalanceView(APIView):
             "updated_balance": updated_balance,
             "deposits": deposit_serializer.data
         }, status=status.HTTP_200_OK)
-

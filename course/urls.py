@@ -11,6 +11,7 @@ router.register('balance', views.DepositView, basename="balance")
 
 
 
+
 urlpatterns = [
     path('', include(router.urls)),
     path('courses/<int:pk>/', views.CourseDetail.as_view(), name='course_detail'),
@@ -19,7 +20,6 @@ urlpatterns = [
     path('enrolls/<int:course_pk>/', views.EnrollmentView.as_view(), name='user_enrollments'),
     path('enrolls/<int:course_pk>/status/', views.EnrollmentStatusView.as_view(), name='enrollment_status'),
     path('enrollview/<int:pk>/', views.StudentEnrollmentsView.as_view(), name='user_view'),
- 
     path('balanceview/', views.DepositBalanceView.as_view(), name='user_balance'),
    
 ]

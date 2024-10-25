@@ -22,6 +22,7 @@ class Course(models.Model):
 
     def __str__(self):
         return f'{self.title} - {self.instructor.user.username}'
+    
 class Comment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='comments')
     name = models.CharField(max_length=30)
@@ -40,14 +41,16 @@ STAR_CHOICES = [
     ('⭐⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'),
 ]
 class Review(models.Model):
-    reviewer = models.ForeignKey(Student, on_delete = models.CASCADE)
-    instructor= models.ForeignKey(Instructor, on_delete = models.CASCADE)
-    body = models.TextField()
-    created = models.DateTimeField(auto_now_add = True)
-    rating = models.CharField(choices = STAR_CHOICES, max_length = 10)
+    reviewer = models.ForeignKey(Student, on_delete=models.CASCADE,null=True, blank=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,null=True, blank=True) 
+    body = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    rating = models.CharField(choices=STAR_CHOICES, max_length=10,null=True, blank=True)
     
     def __str__(self):
-        return f"Reviewer : {self.reviewer.user.first_name} ; Instructor : {self.instructor.user.first_name}"
+        return f"Reviewer : {self.reviewer.user.first_name} ; Course : {self.course.title} ; Instructor : {self.instructor.user.first_name}"
+
 
 class Balance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

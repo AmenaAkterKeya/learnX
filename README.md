@@ -6,8 +6,8 @@
 
 ## Main Features
 
-- **Course Catalog**: Browse a diverse range of courses across various subjects.
 - **User Authentication**: Secure registration and login for users.
+- **Course Catalog**: Browse a diverse range of courses across various subjects.
 - **Course Enrollment**: Easily enroll in courses of your choice.
 - **Roles**: 
    - **Student**: View and manage enrolled courses, deposit funds, and access a personal dashboard.
@@ -79,7 +79,6 @@
 - **POST** `/register/` - Register a new user.
 - **POST** `/login/` - User login.
 - **POST** `/logout/` - User logout.
-- **GET** `/active/<uid64>/<token>/` - Activate a user account using the activation link.
 
 ## Department Management
 
@@ -123,19 +122,24 @@
 
 1. **Clone the Repository**:
    ```bash
+   
    git clone https://github.com/username/learnX.git
    cd workio
 2. **Install Dependencies:**:
    ```bash
+   
    pip install -r requirements.txt
 3. **Run Database Migrations:**:
    ```bash
+   
    python manage.py migrate
 4. **Start the Development Server:**:
    ```bash
+   
    python manage.py runserver
 5. **Run Tests:**:
    ```bash
+   
    http://localhost:8000/
 The backend server will be accessible at http://localhost:8000/api/.
 

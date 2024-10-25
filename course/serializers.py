@@ -32,17 +32,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_students(self, obj):
         all_enrollments = Enroll.objects.filter(course=obj)
-        recent_enrollments = all_enrollments.order_by('-enrolled_on')[:4]
-        recent_student_data = []
         all_student_data = []
-        
-        for enrollment in recent_enrollments:
-            recent_student_data.append({
-                'username': enrollment.student.user.username,
-                'email': enrollment.student.user.email,
-                'enrolled_on': enrollment.enrolled_on,
-            })
-        
         for enrollment in all_enrollments:
             all_student_data.append({
                 'username': enrollment.student.user.username,
@@ -51,7 +41,6 @@ class CourseSerializer(serializers.ModelSerializer):
             })
         
         return {
-            'recent_students': recent_student_data,
             'all_students': all_student_data,
         }
     def create(self, validated_data):

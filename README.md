@@ -33,10 +33,10 @@
 - **Easy Enrollment**: Students can easily enroll in courses of their choice.
 - **Single Enrollment Per Course**: Each student can enroll in a course only once.
 - **View Enrolled Courses**: Students can see a list of their enrolled courses.
-- 
+
 ### Course Management
 - **Category Search**: Users can filter courses based on categories for easier navigation.
-- 
+
 ### Financial Management
 - **Deposit Money**: Students can deposit money to their accounts for course payments.
 
@@ -108,7 +108,7 @@
    ```bash
    
    git clone https://github.com/username/learnX.git
-   cd workio
+   cd learnX
 2. **Install Dependencies:**:
    ```bash
    

@@ -1,20 +1,17 @@
-# LearnX Frontend
+# LearnX Backend
 
-**LearnX** is a web platform designed for online learning, offering a user-friendly interface for students to explore courses, enroll, and manage their learning experience effectively.
+**LearnX** is a web platform designed for online learning. The backend API for LearnX provides endpoints for managing courses, instructors, and student interactions. It enables data retrieval and CRUD operations for user registration, course, enrollment, comments
 
 ---
 
 ## Main Features
 
-- **User Authentication**: Secure registration and login for users.
-- **Course Catalog**: Browse a diverse range of courses across various subjects.
+- **User Authentication**: Secure user registration and login.
+- **Course Catalog**: Browse various courses across various subjects.
 - **Course Enrollment**: Easily enroll in courses of your choice.
 - **Roles**: 
-   - **Student**: View and manage enrolled courses, deposit funds, and access a personal dashboard.
-   - **Instructor**: Upload, edit, and delete courses while managing student enrollments.
-
-- **Responsive Design**: Optimized for seamless use on all devices, including desktops, tablets, and smartphones.
-
+   - **Student**: View and manage enrolled courses, and deposit funds.
+   - **Instructor**: Upload, edit, and delete courses and see students who enroll.
 
 ---
 ## Features Details
@@ -26,35 +23,22 @@
 ### Role-Based Access
 - **Student Role**:
   - **Course Enrollment**: Easily enroll in courses of your choice.
-  - **Single Enrollment Per Course**: Each student can enroll in a course only once, ensuring effective course capacity management.
-  - **View Enrolled Courses**: Students can see a list of the courses they are enrolled in.
-  - **Dashboard Access**: Students have a dedicated dashboard to manage their enrolled courses and account details.
+  - **View Enrolled Courses**: Students can see a list of their enrolled courses.
   - **Deposit Money**: Students can deposit money to their accounts for course payments.
 
 - **Instructor Role**:
-  - **Course Management**: Instructors can upload their courses, edit course details, and delete courses they no longer wish to offer.
-  - **Dashboard Access**: Instructors have a dashboard to view their courses, manage enrollments, and access their profile information.
-    
-### Course Management
-- **Course Catalog**: Browse a diverse range of courses across various subjects.
-- **Category Search**: Users can filter courses based on categories for easier navigation.
-- **Instructor Course Management**: Instructors can upload their courses, edit course details, and delete courses they no longer wish to offer.
+  - **Course Management**: Instructors can upload their courses, edit courses, and delete courses.
 
 ### Enrollment Features
 - **Easy Enrollment**: Students can easily enroll in courses of their choice.
-- **Single Enrollment Per Course**: Each student can enroll in a course only once, ensuring that course capacities are managed effectively.
-- **View Enrolled Courses**: Students can see a list of the courses they are enrolled in.
-
+- **Single Enrollment Per Course**: Each student can enroll in a course only once.
+- **View Enrolled Courses**: Students can see a list of their enrolled courses.
+- 
+### Course Management
+- **Category Search**: Users can filter courses based on categories for easier navigation.
+- 
 ### Financial Management
 - **Deposit Money**: Students can deposit money to their accounts for course payments.
-
-### Dashboards
-- **Student Dashboard**: Students have a dedicated dashboard to view their enrolled courses and account details.
-- **Instructor Dashboard**: Instructors can view their courses, manage enrollments, and access their profile information.
-
-### Responsive Design
-- **Mobile-First Approach**: The design is optimized for use on various devices, ensuring a seamless experience on smartphones, tablets, and desktops.
-- **Adaptive Layout**: Content automatically adjusts to different screen sizes, maintaining usability and aesthetics across devices.
 
 ## Technologies Used
 
@@ -90,8 +74,8 @@
 - **GET** `/courses/` - List all courses.
 - **GET** `/courses/<int:pk>/` - Retrieve details of a specific course.
 - **POST** `/courses/` - Create a new course (Admin/Instructor only).
-- **PUT** `/courses/<int:pk>/` - Update a specific course (Admin/Instructor only).
-- **DELETE** `/courses/<int:pk>/` - Delete a specific course (Admin/Instructor only).
+- **PUT** `/courses/<int: pk>/` - Update a specific course (Admin/Instructor only).
+- **DELETE** `/courses/<int: pk>/` - Delete a specific course (Admin/Instructor only).
 
 ## Comment Management
 

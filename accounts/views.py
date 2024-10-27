@@ -93,7 +93,7 @@ class UserLoginApiView(APIView):
                 return Response({
                     'token': token.key,
                     'user_id': user.id,
-                    'role': role  # Include the role in the response
+                    'role': role 
                 })
             else:
                 return Response({'error' : "Password is incorrect"})

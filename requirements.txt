@@ -15,4 +15,4 @@ urllib3==2.2.2
 whitenoise==6.7.0
 django-environ==0.11.2
 django-filter==24.2
-sslcommerz-lib=1.0
+sslcommerz-lib==1.0

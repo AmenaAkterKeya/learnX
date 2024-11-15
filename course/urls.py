@@ -7,7 +7,9 @@ router.register('department', views.DepartmentViewset)
 router.register('courses', views.CourseList)
 router.register('reviews', views.ReviewViewset) 
 router.register('comment', views.CommentViewset) 
-# router.register(r'money-deposits', views.MoneyDepositView, basename='moneydeposit')
+router.register('listCourses', views.CourseListProgress, basename='course-list-progress')
+
+
 
 
 

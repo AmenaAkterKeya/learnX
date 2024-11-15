@@ -2,7 +2,7 @@ from rest_framework import viewsets, status,filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Department, Course,Review,Comment,Balance,Enroll
-from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,EnrollmentSerializer,CommentSerializer,DepositSerializer
+from .serializers import DepartmentSerializer, CourseSerializer,ReviewSerializer,CoursesSerializer,EnrollmentSerializer,CommentSerializer,DepositSerializer
 from django.http import Http404
 from sslcommerz_lib import SSLCOMMERZ
 from django.http import HttpResponseRedirect
@@ -27,13 +27,23 @@ class CourseList(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filter_backends = [filters.SearchFilter]
+    search_fields = ['department__name', 'instructor__user__first_name','instructor__user__last_name','instructor__id']
     def get_queryset(self):
         queryset = super().get_queryset() 
         instructor_id = self.request.query_params.get('instructor_id')
         if instructor_id:
             queryset = queryset.filter(instructor_id=instructor_id)
         return queryset
-    
+class CourseListProgress(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CoursesSerializer
+    filter_backends = [filters.SearchFilter]
+    def get_queryset(self):
+        queryset = super().get_queryset() 
+        instructor_id = self.request.query_params.get('instructor_id')
+        if instructor_id:
+            queryset = queryset.filter(instructor_id=instructor_id)
+        return queryset    
 class CourseDetail(APIView):
     
 

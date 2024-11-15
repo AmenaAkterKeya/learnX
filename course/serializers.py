@@ -9,23 +9,44 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     # instructor = serializers.StringRelatedField(many=False)
-    # department = serializers.StringRelatedField(many=True)
-    total_enrollments = serializers.SerializerMethodField()
-    total_amount = serializers.SerializerMethodField()
-    students = serializers.SerializerMethodField()
-    total_courses_in_department = serializers.SerializerMethodField()
+    department = serializers.StringRelatedField(many=True)
+   
     class Meta:
         model = Course
         fields = '__all__'
         read_only_fields = ['instructor', 'created_on']
+  
+    def create(self, validated_data):
+        request = self.context.get('request')
+        instructor = request.user.instructor  
+        validated_data['instructor'] = instructor
+        return super().create(validated_data)
+class CoursesSerializer(serializers.ModelSerializer):
+    total_enrollments = serializers.SerializerMethodField()
+    total_amount = serializers.SerializerMethodField()
+    students = serializers.SerializerMethodField()
+    total_courses_in_department = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = [
+            'total_enrollments',
+            'total_amount',
+            'students',
+            'total_courses_in_department'
+        ]
+        read_only_fields = ['instructor', 'created_on']
+
     def get_total_enrollments(self, obj):
         return Enroll.objects.filter(course=obj).count()
+
     def get_total_courses_in_department(self, obj):
         department_counts = {}
         for department in obj.department.all():
             course_count = Course.objects.filter(department=department).count()
             department_counts[department.name] = course_count
         return department_counts
+
     def get_total_amount(self, obj):
         total_fee = Enroll.objects.filter(course=obj).aggregate(total=models.Sum('course__fee'))['total']
         return total_fee or 0
@@ -39,15 +60,12 @@ class CourseSerializer(serializers.ModelSerializer):
                 'email': enrollment.student.user.email,
                 'enrolled_on': enrollment.enrolled_on,
             })
-        
+
         return {
             'all_students': all_student_data,
         }
-    def create(self, validated_data):
-        request = self.context.get('request')
-        instructor = request.user.instructor  
-        validated_data['instructor'] = instructor
-        return super().create(validated_data)
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
